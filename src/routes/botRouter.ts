@@ -6,5 +6,5 @@ export const router = express.Router();
 
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     initialStart();
-    res.send('all good I am working fine');
+    res.send('all good I am working fine').status(200);
 });

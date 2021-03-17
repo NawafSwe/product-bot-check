@@ -4,6 +4,7 @@ import {Request, Response, Application} from 'express';
 import bodyParser from "body-parser";
 import cors = require('cors');
 import helmet = require('helmet');
+import morgan from "morgan";
 
 const {PORT, HOST} = require("./config");
 /* ------------ App Config ------------ */
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(cors());
 app.use(helmet());
+app.use(morgan(`tiny`))
 
 
 /* ------------ Testing Backend ------------ */

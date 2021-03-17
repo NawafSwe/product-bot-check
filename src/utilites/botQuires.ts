@@ -12,10 +12,6 @@ export const BotQuires = {
     },
 }
 
-enum UsersAnswers {
-
-}
-
 export const BotCommands = {
     rateShipment: {
         name: 'rate Shipment'
