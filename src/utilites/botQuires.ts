@@ -1,9 +1,9 @@
 export const BotQuires = {
-    welcomingUser: {query: `Hello. How are you today? 📥`},
+    welcomingUser: {query: `<b>Hello</b> <i>welcome to product bot checker</i>. 📥`},
     askUserHealth: {
         query: "How are you doing? 🧐",
-        firstChoice: "I am Good thank you ",
-        secondChoice: "Not good At All"
+        firstChoice: "I am good thank you",
+        secondChoice: "Not good at all"
     },
 }
 
