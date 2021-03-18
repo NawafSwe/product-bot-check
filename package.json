@@ -8,8 +8,7 @@
     "build": "rm -rf dist && tsc",
     "setup": "npm install && npm update",
     "start:dev": "NODE_ENV=development nodemon src/index.ts",
-    "start": " npm run build && node src/index.ts",
-    "start:prod": "npm run build && NODE_ENV=production node dist/index.js"
+    "start:prod": "npm run build && NODE_ENV=developmemt node dist/index.js"
   },
   "repository": {
     "type": "git",

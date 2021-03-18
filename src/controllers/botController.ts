@@ -4,7 +4,7 @@ import {NextFunction} from "express";
 const LocalSession = require('telegraf-session-local');
 import {BotQuires, BotCommands, mappingBotCommands} from "../utilites/botQuires";
 
-const bot = new Telegraf(process.env.BOT_API);
+const bot = new Telegraf(process.env.TOKEN);
 bot.use((new LocalSession({database: 'health_db.json'})).middleware())
 
 function initQuires() {
@@ -54,12 +54,16 @@ export function initialStart() {
         fn.replyWithHTML(`<b>opps ${BotCommands.rateShipment.name}</b> triggered`);
     });
 
+    // starting check process
     bot.hears(BotCommands.doHealthCheck.name, async (fn: any) => {
         fn.replyWithHTML(`<i>let us do fast check for the product 👍🏻</i>`);
         fn.replyWithHTML(`<i>please rate the physical status from 1 to 5 </i>`, Markup.keyboard([
             '1', '2', '3', '4', '5'
         ]));
     });
+
+    // session saved after user response
+    // bot.on(text)
 
     // quit bot will be triggered when user type /quit
     quitBot();
