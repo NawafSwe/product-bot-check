@@ -164,7 +164,7 @@ export function initialStart() {
 
     // for fetching price when user type any number for the prouct price
     bot.on(`text`, (fn: any) => {
-        if (fn.message.text) {
+        if (typeof fn.message.text === 'number') {
             fn.session.price = parseFloat(fn.message.text);
         }
     });

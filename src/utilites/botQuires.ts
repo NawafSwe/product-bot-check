@@ -47,8 +47,8 @@ export const BotCommands = {
     doHealthCheck: {name: "want to do new check?"},
     deliveryLocation: {name: 'please provide the delivery location'},
     physicalStatus: {name: 'How was the physical status'},
-    quit: {name: '/quit'},
-    help: {name: '/help'},
+    quit: {name: 'quit'},
+    help: {name: 'help'},
 
 }
 
