@@ -1,4 +1,4 @@
-const {Telegraf, Markup, Extra} = require('telegraf')
+const {Telegraf, Markup, Extra, TelegrafContext} = require('telegraf')
 import {NextFunction} from "express";
 import TelegrafQuestion from "telegraf-question";
 
@@ -24,8 +24,10 @@ export function initialStart() {
 
     // init help command
     bot.command('help', async (fn: any) => {
-        await fn.replyWithHTML('<b>available commands</b>', Markup.keyboard(
-            [Markup.button.callback(`${BotCommands.doHealthCheck.name}`, `${BotCommands.doHealthCheck.name}`)]
+        await fn.replyWithHTML('<b>available commands</b>', Markup.inlineKeyboard(
+            [Markup.button.callback(`${BotCommands.doHealthCheck.name}`, `do_check`),
+                Markup.button.callback('1', '1'),
+            ]
             )
                 .oneTime()
                 .resize()
@@ -33,31 +35,26 @@ export function initialStart() {
 
     });
     // triggered after help
-
     // starting check process
-    bot.action(BotCommands.doHealthCheck.name, async (fn: any, next: NextFunction) => {
-        await fn.answerCbQuery();
-        fn.replyWithHTML(`<i>let us do fast check for the product 👍🏻</i>`);
+    bot.action('do_check', async (fn: any, next: NextFunction) => {
+        fn.replyWithHTML(`<b>Rate quality of tracking the shipment from 0 to 5</b>`, Markup.inlineKeyboard([
+            [
+                Markup.button.callback(AnswersQuires.ratingQuality.zero.num, AnswersQuires.ratingQuality.zero.num)
+            ],
+            //[]
+        ]));
 
-        let quality = await fn.ask(`Rate from 0 to 5`);
-        if (quality == null) {
-            console.log(`quality is ${quality.message.text}`);
-            return next();
-        }
-        console.log(`quality is ${quality}`);
-        // fn.replyWithHTML(`<i>please rate the physical status from 1 to 5 </i>`, Markup.keyboard([
-        //     Markup.button.callback(`${AnswersQuires.ratingQuality.zero.num}`, `${AnswersQuires.ratingQuality.zero.num}`),
-        //     '2', '3', '4', '5'
-        // ]));
+    });
+    // action for user interaction after choosing rating
+    // if he choose 0
+    bot.action(AnswersQuires.ratingQuality.zero.num, async (fn: any , next: NextFunction) => {
+        fn.session.ratedQuality = AnswersQuires.ratingQuality.zero.num;
+        return next();
     });
 
-
-    // // session saved after user response
-    // bot.on(`text`, (fn: any) => {
-    //     fn.session.ratedQUality = fn.session.ratedQUality || 0;
-    //
-    // });
-
+    bot.command('/stat',(fn:any)=>{
+        fn.replyWithHTML(`database has ${fn.session.ratedQuality}`)
+    })
     // quit bot will be triggered when user type /quit
     quitBot();
     bot.launch();
@@ -79,3 +76,8 @@ function quitBot() {
 }
 
 
+// // session saved after user response
+// bot.on(`text`, (fn: any) => {
+//     fn.session.ratedQUality = fn.session.ratedQUality || 0;
+//
+// });

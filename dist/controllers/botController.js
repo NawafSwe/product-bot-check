@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initialStart = void 0;
-const { Telegraf, Markup, Extra } = require('telegraf');
+const { Telegraf, Markup, Extra, TelegrafContext } = require('telegraf');
 const telegraf_question_1 = __importDefault(require("telegraf-question"));
 const LocalSession = require('telegraf-session-local');
 const botQuires_1 = require("../utilites/botQuires");
@@ -32,34 +32,42 @@ function initialStart() {
     });
     // init help command
     bot.command('help', (fn) => __awaiter(this, void 0, void 0, function* () {
-        yield fn.replyWithHTML('<b>available commands</b>', Markup.keyboard([
-            [`${botQuires_1.BotCommands.ratePhysical.name}`, `${botQuires_1.BotCommands.rateShipment.name}`],
-            [`${botQuires_1.BotCommands.quit.name}`, Markup.button.callback(`${botQuires_1.BotCommands.doHealthCheck.name}`)]
+        yield fn.replyWithHTML('<b>available commands</b>', Markup.inlineKeyboard([Markup.button.callback(`${botQuires_1.BotCommands.doHealthCheck.name}`, `do_check`),
+            Markup.button.callback('1', '1'),
         ])
             .oneTime()
             .resize());
     }));
     // triggered after help
     // starting check process
-    bot.action(botQuires_1.BotCommands.doHealthCheck.name, (fn, next) => __awaiter(this, void 0, void 0, function* () {
+    bot.action(`1`, (fn) => __awaiter(this, void 0, void 0, function* () {
         yield fn.answerCbQuery();
-        fn.replyWithHTML(`<i>let us do fast check for the product 👍🏻</i>`);
-        let quality = yield fn.ask(`Rate from 0 to 5`);
-        if (quality == null) {
-            console.log(`quality is ${quality.message.text}`);
-            return next();
+        let rate = yield fn.ask({
+            text: `what it is your rating`,
+            extra: {
+                reply_markup: Markup.inlineKeyboard(['0'])
+            }
+        }, null, `rate`, (fn) => {
+            var _a;
+            let rate = parseInt((_a = fn.message) === null || _a === void 0 ? void 0 : _a.text);
+            console.log(rate);
+            return rate;
+        });
+        if (rate !== null) {
+            console.log(rate);
         }
-        console.log(`quality is ${quality}`);
-        // fn.replyWithHTML(`<i>please rate the physical status from 1 to 5 </i>`, Markup.keyboard([
-        //     Markup.button.callback(`${AnswersQuires.ratingQuality.zero.num}`, `${AnswersQuires.ratingQuality.zero.num}`),
-        //     '2', '3', '4', '5'
-        // ]));
     }));
-    // // session saved after user response
-    // bot.on(`text`, (fn: any) => {
-    //     fn.session.ratedQUality = fn.session.ratedQUality || 0;
-    //
-    // });
+    bot.action('do_check', (fn, next) => __awaiter(this, void 0, void 0, function* () {
+        fn.replyWithHTML(`<b>Rate quality of tracking the shipment from 0 to 5</b>`, Markup.inlineKeyboard([
+            [
+                Markup.button.callback(botQuires_1.AnswersQuires.ratingQuality.zero.num, botQuires_1.AnswersQuires.ratingQuality.zero.num)
+            ],
+        ]));
+    }));
+    // action for user interaction after choosing rating
+    // if he choose 0
+    bot.action(botQuires_1.AnswersQuires.ratingQuality.zero.num, (fn) => __awaiter(this, void 0, void 0, function* () {
+    }));
     // quit bot will be triggered when user type /quit
     quitBot();
     bot.launch();
@@ -77,3 +85,8 @@ function quitBot() {
         fn.leaveChat();
     });
 }
+// // session saved after user response
+// bot.on(`text`, (fn: any) => {
+//     fn.session.ratedQUality = fn.session.ratedQUality || 0;
+//
+// });
