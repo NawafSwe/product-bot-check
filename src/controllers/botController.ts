@@ -112,11 +112,6 @@ export function initialStart() {
 
     });
 
-// else if (fn.message.text == `no`) {
-//         console.log(`get no`);
-//         fn.session.locationDelivry = fn.message.text;
-//     }
-
     bot.action(`cancel`, (_: any) => {
         quitBot();
     });
