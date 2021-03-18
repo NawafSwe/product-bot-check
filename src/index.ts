@@ -4,7 +4,7 @@ import {Request, Response, Application} from 'express';
 import bodyParser from "body-parser";
 import cors = require('cors');
 import helmet = require('helmet');
-//import morgan from "morgan";
+import {initialStart} from "./controllers/botController";
 
 const {PORT, HOST} = require("./config");
 /* ------------ App Config ------------ */
@@ -13,8 +13,6 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(cors());
 app.use(helmet());
-//app.use(morgan(`tiny`));
-
 
 /* ------------ Testing Backend ------------ */
 
@@ -30,12 +28,8 @@ app.use(helmet());
 app.get('/', async (req: Request, res: Response) => {
     res.send('Backend health is good').status(200);
 });
-
-/* ------------ Using Routes ------------ */
-import {router as bootRoute} from "./routes/botRouter" ;
-
-app.use('/bot', bootRoute);
-
 /* ------------ Start listening ------------ */
-app.listen(PORT);
-console.log(`server running on  http://${HOST}:${PORT}`);
+app.listen(PORT, HOST, () => {
+    initialStart();
+    console.log(`server running on  http://${HOST}:${PORT}`);
+});

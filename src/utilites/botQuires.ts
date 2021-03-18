@@ -1,3 +1,6 @@
+/**
+ *
+ */
 export const BotQuires = {
     welcomingUser: {
         query: `<b>Hello</b> <i>welcome to product bot checker</i>. 📥`
@@ -11,6 +14,9 @@ export const BotQuires = {
         secondQuires: ['not good at all', 'not good', 'i am not', 'bad', 'sad', 'not okay']
     },
 }
+/**
+ *
+ */
 export const AnswersQuires = {
     ratingQuality: {
         zero: {num: '0', id: '0s'},
@@ -33,7 +39,9 @@ export const BotCommands = {
 
 }
 
-
+/**
+ *
+ */
 export function mappingBotCommands() {
     let commandList = [];
     let keys = Object.values(BotCommands);

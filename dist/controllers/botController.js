@@ -92,15 +92,19 @@ function initialStart() {
     bot.action('good', (fn, next) => __awaiter(this, void 0, void 0, function* () {
         fn.session.physicalQuality = `good`;
         // next
-        askForLocation(fn);
+        yield askForLocation(fn);
         return next();
     }));
-    bot.action('yes', (fn) => {
+    bot.action('yes', (fn, next) => __awaiter(this, void 0, void 0, function* () {
         fn.session.locationDelivry = `Yes`;
-    });
-    bot.action('no', (fn) => {
+        yield getPrice(fn, next);
+        return next();
+    }));
+    bot.action('no', (fn, next) => __awaiter(this, void 0, void 0, function* () {
         fn.session.locationDelivry = `No`;
-    });
+        yield getPrice(fn, next);
+        return next();
+    }));
     bot.action(`cancel`, (_) => {
         quitBot();
     });
@@ -144,4 +148,14 @@ function askForLocation(fn) {
     fn.replyWithHTML(`<b>are you satisfied delivery location? you can provide the location of the delivery before answering 🧭</b>`, Markup.inlineKeyboard([
         Markup.button.callback(`Yes`, `yes`), Markup.button.callback(`No`, `no`)
     ]));
+}
+function getPrice(fn, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        fn.answerCbQuery();
+        let price = yield fn.ask({ text: `<b>what is the price of the product ?</b>`, parse_mode: 'HTML' });
+        if (price != null) {
+            fn.session.price = price;
+        }
+        return next();
+    });
 }

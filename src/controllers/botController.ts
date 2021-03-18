@@ -99,16 +99,21 @@ export function initialStart() {
     bot.action('good', async (fn: any, next: NextFunction) => {
         fn.session.physicalQuality = `good`;
         // next
-        askForLocation(fn);
+        await askForLocation(fn);
         return next();
     });
 
-    bot.action('yes', (fn: any) => {
+    bot.action('yes', async (fn: any, next: NextFunction) => {
         fn.session.locationDelivry = `Yes`;
+        await getPrice(fn, next);
+        return next();
+
     });
 
-    bot.action('no', (fn: any) => {
+    bot.action('no', async (fn: any, next: NextFunction) => {
         fn.session.locationDelivry = `No`;
+        await getPrice(fn, next);
+        return next();
 
     });
 
@@ -170,4 +175,14 @@ function askForLocation(fn: any) {
     fn.replyWithHTML(`<b>are you satisfied delivery location? you can provide the location of the delivery before answering 🧭</b>`, Markup.inlineKeyboard([
         Markup.button.callback(`Yes`, `yes`), Markup.button.callback(`No`, `no`)
     ]));
+}
+
+async function getPrice(fn: any, next: NextFunction) {
+    fn.answerCbQuery();
+    let price = await fn.ask({text: `<b>what is the price of the product ?</b>`, parse_mode: 'HTML'});
+    if (price != null) {
+        fn.session.price = price;
+    }
+    return next();
+
 }
