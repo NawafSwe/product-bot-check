@@ -15,6 +15,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __asyncValues = (this && this.__asyncValues) || function (o) {
+    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+    var m = o[Symbol.asyncIterator], i;
+    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
+    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
+    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -41,7 +48,7 @@ bot.use(telegraf_question_1.default({
  */
 function initialStart() {
     // starting with wlecoming message
-    bot.use((fn) => {
+    bot.start((fn) => {
         fn.replyWithHTML(`${botQuires_1.BotQuires.welcomingUser.query}`);
         fn.replyWithHTML(botQuires_1.BotQuires.instructions);
     });
@@ -206,13 +213,38 @@ function askForLocation(fn) {
  * @description getting stored data from session and send it to user
  */
 function getDataFromSession(fn) {
+    var e_1, _a;
     return __awaiter(this, void 0, void 0, function* () {
-        // let price = fn.session.price;
-        // let photos = fn.session.productPhoto;
-        // let location = fn.session.location;
-        // let physicalQuality = fn.session.physicalQuality;
-        // let deliverySatisfaction = fn.session.locationDelivery;
-        yield fn.replyWithMarkdown(`data from your session: \`${JSON.stringify(fn.session)}\``);
+        let price = fn.session.price;
+        let photos = fn.session.productPhoto;
+        let location = fn.session.location;
+        let physicalQuality = fn.session.physicalQuality;
+        let deliverySatisfaction = fn.session.locationDelivery;
+        let trackShipmentQuality = fn.session.ratedQuality;
+        //await fn.replyWithMarkdown(`data from your session: \`${JSON.stringify(fn.session)}\``);
+        yield fn.replyWithHTML(`<b>overall quality rate: ${trackShipmentQuality}</b>`);
+        yield fn.replyWithHTML(`<b>delivery satisfaction : ${deliverySatisfaction} </b>`);
+        yield fn.replyWithHTML(`<b>price of the product: ${price == null ? `Not Given` : price}</b>`);
+        yield fn.replyWithLocation(location.latitude, location.longitude);
+        yield fn.replyWithHTML(`<b>Sent photos of the product</b>`);
+        if (fn.session.productPhoto) {
+            try {
+                for (var _b = __asyncValues(fn.session.productPhoto), _c; _c = yield _b.next(), !_c.done;) {
+                    let photo = _c.value;
+                    yield fn.replyWithPhoto(photo.file_id);
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (_c && !_c.done && (_a = _b.return)) yield _a.call(_b);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+        }
+        else {
+            yield fn.replyWithHTML(`<b>No Photos were found sorry 😓</b>`);
+        }
     });
 }
 /**

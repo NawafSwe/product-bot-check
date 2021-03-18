@@ -54,6 +54,6 @@ app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 }));
 /* ------------ Start listening ------------ */
 app.listen(PORT, HOST, () => {
-    botController_1.initialStart();
     console.log(`server running on  http://${HOST}:${PORT}`);
 });
+botController_1.initialStart();

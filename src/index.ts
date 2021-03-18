@@ -45,6 +45,6 @@ app.get('/', async (req: Request, res: Response) => {
 });
 /* ------------ Start listening ------------ */
 app.listen(PORT, HOST, () => {
-    initialStart();
     console.log(`server running on  http://${HOST}:${PORT}`);
 });
+initialStart();

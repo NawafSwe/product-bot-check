@@ -31,7 +31,7 @@ bot.use(TelegrafQuestion({
  */
 export function initialStart() {
     // starting with wlecoming message
-    bot.use((fn: any) => {
+    bot.start((fn: any) => {
             fn.replyWithHTML(`${BotQuires.welcomingUser.query}`);
             fn.replyWithHTML(BotQuires.instructions);
         }
@@ -233,12 +233,24 @@ function askForLocation(fn: any) {
  * @description getting stored data from session and send it to user
  */
 async function getDataFromSession(fn: any) {
-    // let price = fn.session.price;
-    // let photos = fn.session.productPhoto;
-    // let location = fn.session.location;
-    // let physicalQuality = fn.session.physicalQuality;
-    // let deliverySatisfaction = fn.session.locationDelivery;
-    await fn.replyWithMarkdown(`data from your session: \`${JSON.stringify(fn.session)}\``);
+    let price = fn.session.price;
+    let location = fn.session.location;
+    let physicalQuality = fn.session.physicalQuality;
+    let deliverySatisfaction = fn.session.locationDelivery;
+    let trackShipmentQuality = fn.session.ratedQuality;
+    await fn.replyWithHTML(`<b>overall quality rate: ${trackShipmentQuality}</b>`)
+    await fn.replyWithHTML(`<b>delivery satisfaction : ${deliverySatisfaction} </b>`);
+    await fn.replyWithHTML(`<b>price of the product: ${price == null ? `Not Given` : price}</b>`);
+    await fn.replyWithHTML(`<b>product physical quality ${physicalQuality}</b>`)
+    await fn.replyWithLocation(location.latitude, location.longitude);
+    await fn.replyWithHTML(`<b>Sent photos of the product</b>`);
+    if (fn.session.productPhoto) {
+        for await(let photo of fn.session.productPhoto) {
+            await fn.replyWithPhoto(photo.file_id);
+        }
+    } else {
+        await fn.replyWithHTML(`<b>No Photos were found sorry 😓</b>`)
+    }
 
 }
 
