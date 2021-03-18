@@ -14,6 +14,8 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(cors());
 app.use(helmet());
+// docs refers to the project documentation.
+app.use(express.static("docs"));
 
 /* ------------ Testing Backend ------------ */
 
@@ -27,7 +29,8 @@ app.use(helmet());
  * @param {callback} middleware - Express middleware.
  */
 app.get('/', async (req: Request, res: Response) => {
-    res.send('Backend health is good').status(200);
+    // rendering the docs page
+    res.render(`docs`);
 });
 /* ------------ Start listening ------------ */
 app.listen(PORT, HOST, () => {

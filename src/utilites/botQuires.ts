@@ -1,5 +1,13 @@
 /**
- *
+ * @module src/utilities/botQuires.ts
+ * this module holds bot quires variables
+ */
+
+
+/**
+ *@namespace BotQuires
+ * @description bot queries contains all required sentences for the bot , using this approach to avoid typos and to much typing
+ * while developing the logic in the controller.
  */
 export const BotQuires = {
     welcomingUser: {
@@ -15,7 +23,8 @@ export const BotQuires = {
     },
 }
 /**
- *
+ * @namespace AnswersQuires
+ * @description contains all answer quires to user it as actions in the app
  */
 export const AnswersQuires = {
     ratingQuality: {
@@ -28,6 +37,10 @@ export const AnswersQuires = {
 
     }
 }
+/**
+ * @namespace BotCommands
+ * @description contains all required bot commands associated with the bot.
+ */
 export const BotCommands = {
     rateShipment: {name: 'How was the quality of tracking the shipment'},
     ratePhysical: {name: 'rate Physical'},
@@ -40,7 +53,9 @@ export const BotCommands = {
 }
 
 /**
- *
+ * @function
+ * @namespace mappingBotCommands
+ * @description function that maps the name of the commands for a bot maybe used for future development
  */
 export function mappingBotCommands() {
     let commandList = [];
