@@ -8,25 +8,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initialStart = void 0;
 const { Telegraf, Markup, Extra } = require('telegraf');
+const telegraf_question_1 = __importDefault(require("telegraf-question"));
 const LocalSession = require('telegraf-session-local');
 const botQuires_1 = require("../utilites/botQuires");
 const bot = new Telegraf(process.env.TOKEN);
+// config bot
+// using session
 bot.use((new LocalSession({ database: 'health_db.json' })).middleware());
-function initQuires() {
-    for (let q of botQuires_1.BotQuires.askUserHealth.firstQuires) {
-        bot.hears(q, (fn, next) => {
-            return fn.replyWithHTML('<i>Have a nice day 😊</i>').then(() => next());
-        });
-    }
-    for (let q of botQuires_1.BotQuires.askUserHealth.secondQuires) {
-        bot.hears(q, (fn, next) => {
-            return fn.replyWithHTML('<i>sorry for that how can I help 😊</i>').then(() => next());
-        });
-    }
-}
+// using TelegrafQuestion to ask question and get answer back
+bot.use(telegraf_question_1.default({
+    cancelTimeout: 300000 // 5 min
+}));
 function initialStart() {
     bot.start((fn) => {
         fn.replyWithHTML(`${botQuires_1.BotQuires.welcomingUser.query}`);
@@ -46,21 +44,26 @@ function initialStart() {
             .resize());
     }));
     // triggered after help
-    bot.hears(botQuires_1.BotCommands.ratePhysical.name, (fn) => __awaiter(this, void 0, void 0, function* () {
-        fn.replyWithHTML(`<b>opps ${botQuires_1.BotCommands.ratePhysical.name}</b> triggered`);
-    }));
-    bot.hears(botQuires_1.BotCommands.rateShipment.name, (fn) => __awaiter(this, void 0, void 0, function* () {
-        fn.replyWithHTML(`<b>opps ${botQuires_1.BotCommands.rateShipment.name}</b> triggered`);
-    }));
     // starting check process
-    bot.hears(botQuires_1.BotCommands.doHealthCheck.name, (fn) => __awaiter(this, void 0, void 0, function* () {
+    bot.hears(botQuires_1.BotCommands.doHealthCheck.name, (fn, next) => __awaiter(this, void 0, void 0, function* () {
+        yield fn.answerCbQuery();
+        let chosen = 0;
         fn.replyWithHTML(`<i>let us do fast check for the product 👍🏻</i>`);
-        fn.replyWithHTML(`<i>please rate the physical status from 1 to 5 </i>`, Markup.keyboard([
-            '1', '2', '3', '4', '5'
-        ]));
+        let quality = yield fn.ask(`Rate from 0 to 5`);
+        if (quality == null) {
+            return next();
+        }
+        console.log(`quality is ${quality}`);
+        // fn.replyWithHTML(`<i>please rate the physical status from 1 to 5 </i>`, Markup.keyboard([
+        //     Markup.button.callback(`${AnswersQuires.ratingQuality.zero.num}`, `${AnswersQuires.ratingQuality.zero.num}`),
+        //     '2', '3', '4', '5'
+        // ]));
     }));
-    // session saved after user response
-    // bot.on(text)
+    // // session saved after user response
+    // bot.on(`text`, (fn: any) => {
+    //     fn.session.ratedQUality = fn.session.ratedQUality || 0;
+    //
+    // });
     // quit bot will be triggered when user type /quit
     quitBot();
     bot.launch();

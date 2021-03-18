@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mappingBotCommands = exports.BotCommands = exports.BotQuires = void 0;
+exports.mappingBotCommands = exports.BotCommands = exports.AnswersQuires = exports.BotQuires = void 0;
 exports.BotQuires = {
     welcomingUser: {
         query: `<b>Hello</b> <i>welcome to product bot checker</i>. 📥`
@@ -13,6 +13,11 @@ exports.BotQuires = {
         firstQuires: ['good', 'fine', 'all good', 'all fine', 'all good', "I am good thank you"],
         secondQuires: ['not good at all', 'not good', 'i am not', 'bad', 'sad', 'not okay']
     },
+};
+exports.AnswersQuires = {
+    ratingQuality: {
+        zero: { num: '0', id: '0s' }
+    }
 };
 exports.BotCommands = {
     rateShipment: {

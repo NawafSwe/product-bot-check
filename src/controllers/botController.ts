@@ -1,25 +1,19 @@
 const {Telegraf, Markup, Extra} = require('telegraf')
 import {NextFunction} from "express";
+import TelegrafQuestion from "telegraf-question";
 
 const LocalSession = require('telegraf-session-local');
-import {BotQuires, BotCommands, mappingBotCommands} from "../utilites/botQuires";
+import {BotQuires, BotCommands, AnswersQuires} from "../utilites/botQuires";
 
 const bot = new Telegraf(process.env.TOKEN);
-bot.use((new LocalSession({database: 'health_db.json'})).middleware())
 
-function initQuires() {
-    for (let q of BotQuires.askUserHealth.firstQuires) {
-        bot.hears(q, (fn: any, next: NextFunction) => {
-            return fn.replyWithHTML('<i>Have a nice day 😊</i>').then(() => next());
-        });
-    }
-
-    for (let q of BotQuires.askUserHealth.secondQuires) {
-        bot.hears(q, (fn: any, next: NextFunction) => {
-            return fn.replyWithHTML('<i>sorry for that how can I help 😊</i>').then(() => next());
-        });
-    }
-}
+// config bot
+// using session
+bot.use((new LocalSession({database: 'health_db.json'})).middleware());
+// using TelegrafQuestion to ask question and get answer back
+bot.use(TelegrafQuestion({
+    cancelTimeout: 300000 // 5 min
+}));
 
 export function initialStart() {
     bot.start((fn: any) => {
@@ -46,24 +40,30 @@ export function initialStart() {
 
     });
     // triggered after help
-    bot.hears(BotCommands.ratePhysical.name, async (fn: any) => {
-        fn.replyWithHTML(`<b>opps ${BotCommands.ratePhysical.name}</b> triggered`);
-    });
-
-    bot.hears(BotCommands.rateShipment.name, async (fn: any) => {
-        fn.replyWithHTML(`<b>opps ${BotCommands.rateShipment.name}</b> triggered`);
-    });
 
     // starting check process
-    bot.hears(BotCommands.doHealthCheck.name, async (fn: any) => {
+    bot.hears(BotCommands.doHealthCheck.name, async (fn: any, next: NextFunction) => {
+        await fn.answerCbQuery();
+        let chosen = 0;
         fn.replyWithHTML(`<i>let us do fast check for the product 👍🏻</i>`);
-        fn.replyWithHTML(`<i>please rate the physical status from 1 to 5 </i>`, Markup.keyboard([
-            '1', '2', '3', '4', '5'
-        ]));
+
+        let quality = await fn.ask(`Rate from 0 to 5`);
+        if (quality == null) {
+            return next();
+        }
+        console.log(`quality is ${quality}`);
+        // fn.replyWithHTML(`<i>please rate the physical status from 1 to 5 </i>`, Markup.keyboard([
+        //     Markup.button.callback(`${AnswersQuires.ratingQuality.zero.num}`, `${AnswersQuires.ratingQuality.zero.num}`),
+        //     '2', '3', '4', '5'
+        // ]));
     });
 
-    // session saved after user response
-    // bot.on(text)
+
+    // // session saved after user response
+    // bot.on(`text`, (fn: any) => {
+    //     fn.session.ratedQUality = fn.session.ratedQUality || 0;
+    //
+    // });
 
     // quit bot will be triggered when user type /quit
     quitBot();
