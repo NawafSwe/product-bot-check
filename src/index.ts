@@ -1,14 +1,25 @@
+/**
+ * @module src/index.ts
+ * this module requires the following packages:
+ * @requires express
+ * @requires Request,Response,Application
+ * @requires bodyParser
+ * @requires cors
+ * @requires helmet
+ *
+ */
+
 // importing dependencies
 const express = require('express');
 import {Request, Response, Application} from 'express';
 import bodyParser from "body-parser";
 import cors = require('cors');
+// increasing server security
 import helmet = require('helmet');
 
 const {PORT, HOST} = require("./config");
 import {initialStart} from "./controllers/botController";
 /* ------------ App Config ------------ */
-
 const app: Application = express();
 app.use(express.json());
 app.use(bodyParser.json());
