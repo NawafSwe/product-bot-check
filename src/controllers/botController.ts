@@ -151,7 +151,7 @@ export async function initialStart() {
     });
 
     // on receiving location or photo from user regarding product photo or deliveryLocation
-    bot.on([`photo`, `location`], (fn: any) => {
+    bot.on([`photo`, `location`, `text`], (fn: any) => {
         if (fn.message.photo) {
             fn.session.productPhoto = fn.message.photo;
         }
@@ -160,13 +160,10 @@ export async function initialStart() {
             fn.session.location = fn.message.location;
         }
 
-    });
-
-    // for fetching price when user type any number for the prouct price
-    bot.on(`text`, (fn: any) => {
         if (typeof fn.message.text === 'number') {
             fn.session.price = parseFloat(fn.message.text);
         }
+
     });
     // lunching bot
     bot.launch();
@@ -183,7 +180,7 @@ export async function initialStart() {
  * @namespace quitBot
  * @description quit the bot and leave the chat
  */
-async function quitBot(fn: any) {
+async function quitBot(fn: Context) {
     // quitting the bot
     // Explicit usage
     await fn.replyWithHTML(`<b>bye bye 👋🏻</b>`);
@@ -196,7 +193,7 @@ async function quitBot(fn: any) {
  * @description asking user about the physical status of the product
  */
 
-async function checkPhysicalStatus(fn: any) {
+async function checkPhysicalStatus(fn: Context) {
     await fn.replyWithHTML(`<b>How was the physical status of the product?</b>`, Markup.inlineKeyboard([
             [Markup.button.callback(`Good`, `good`), Markup.button.callback(`Bad`, 'bad')],
             [Markup.button.callback('cancel', 'cancel')]
@@ -210,7 +207,7 @@ async function checkPhysicalStatus(fn: any) {
  *  * @param fn telegram context
  * @description asking user about the location
  */
-async function askForLocation(fn: any) {
+async function askForLocation(fn: Context) {
     await fn.replyWithHTML(`<b>are you satisfied delivery location?</b>`, Markup.inlineKeyboard([
             [Markup.button.callback(`Yes`, `yes`), Markup.button.callback(`No`, `no`)],
             [Markup.button.callback('cancel', 'cancel')]
@@ -266,12 +263,24 @@ async function clearSession(fn: any) {
     fn.session = null;
 }
 
-async function indicateFinish(fn: any) {
+/**
+ * @async
+ * @function
+ * @namespace indicateFinish
+ * @param fn telegram context
+ * @description indicates that the process of checking is done
+ */
+async function indicateFinish(fn: Context) {
     await fn.replyWithHTML(`<b>Great We Finished thank you for your feedback you can view the last operation you did by typing view session</b>`);
 
 }
 
-
+/**
+ * @async
+ * @function
+ * @namespace initChoices
+ * @description preparing choices for quality question
+ */
 async function initChoices() {
     for await(let [_, value] of Object.entries(AnswersQuires.ratingQuality)) {
         bot.action(value.num, async (fn: any, next: NextFunction) => {
@@ -282,6 +291,13 @@ async function initChoices() {
     }
 }
 
+/**
+ * @async
+ * @function
+ * @namespace optionalPhoto
+ * @param fn telegram context
+ * @description asks the user if he/she prefers to upload a photo of the product
+ */
 async function optionalPhoto(fn: Context) {
     await fn.replyWithHTML(`<b>Would like to provide a picture? if yes please send it and press okay if you would like to skip just press skip</b>`, Markup.inlineKeyboard([
         Markup.button.callback(`Okay`, 'uploadPhoto'),
@@ -290,6 +306,14 @@ async function optionalPhoto(fn: Context) {
     ]));
 }
 
+/**
+ * @async
+ * @function
+ * @namespace optionalLocation
+ * @param fn telegram context
+ * @description asks the user if he/she prefers to upload a location of the delivery
+ *
+ */
 async function optionalLocation(fn: Context) {
     await fn.replyWithHTML(`<b>can you provide the location? you can skip or send location and click Okay to proceed</b>`, Markup.inlineKeyboard([
         Markup.button.callback(`Okay`, 'uploadLocation'),
@@ -297,7 +321,13 @@ async function optionalLocation(fn: Context) {
     ]));
 }
 
-
+/**
+ * @async
+ * @function
+ * @namespace optionalPrice
+ * @param fn telegram context
+ * @description asks the user to enter the price of the product
+ */
 async function optionalPrice(fn: Context) {
     await fn.replyWithHTML(`<b>What is the price of the product ?</b> type the price and press Continue to proceed next`, Markup.inlineKeyboard([
         Markup.button.callback(`continue`, 'continueWithPrice')

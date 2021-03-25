@@ -113,11 +113,13 @@ function initialStart() {
             return next();
         }));
         bot.action('uploadPhoto', (fn) => __awaiter(this, void 0, void 0, function* () {
-            yield askForLocation(fn);
+            yield optionalPrice(fn);
         }));
         bot.action(`skipPhoto`, (fn) => __awaiter(this, void 0, void 0, function* () {
-            yield askForLocation(fn);
+            yield optionalPrice(fn);
         }));
+        // after uploading photo ask for price
+        bot.action(`continueWithPrice`, (fn) => __awaiter(this, void 0, void 0, function* () { return yield askForLocation(fn); }));
         // if user had bad experience with the delivery location or not
         bot.action('yes', (fn, next) => __awaiter(this, void 0, void 0, function* () {
             fn.session.locationDelivery = `Yes`;
@@ -309,6 +311,8 @@ function optionalLocation(fn) {
 }
 function optionalPrice(fn) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield fn.replyWithHTML(`<b>What is the price of the product ?</b> type the price and press Continue to proceed next`, Markup.inlineKeyboard([]));
+        yield fn.replyWithHTML(`<b>What is the price of the product ?</b> type the price and press Continue to proceed next`, Markup.inlineKeyboard([
+            Markup.button.callback(`continue`, 'continueWithPrice')
+        ]));
     });
 }
