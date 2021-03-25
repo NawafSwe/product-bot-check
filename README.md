@@ -28,10 +28,12 @@
         <li>`clear session` it will clear the session for the user.</li>
     </ol>
 </li>
-
+<li>`/data` to view saved data in the session</li>
+<li>`/clearData` to clear the data from the session</li>
+<li>`/quit` to quit from the chat </li>
 
 </ul>
 </li>
-<li>`/quit` to quit the bot chat</li>
+
 </ol>
 
