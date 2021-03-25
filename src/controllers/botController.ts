@@ -146,7 +146,7 @@ export async function initialStart() {
     });
 
     // on receiving location or photo from user regarding product photo or deliveryLocation
-    bot.on([`photo`, `location`, `text`], (fn: any) => {
+    bot.on([`photo`, `location`], (fn: any) => {
         if (fn.message.photo) {
             fn.session.productPhoto = fn.message.photo;
         }
@@ -155,11 +155,12 @@ export async function initialStart() {
             fn.session.location = fn.message.location;
         }
 
+    });
+    bot.on(`text`, async (fn: any) => {
         if (typeof fn.message.text === 'number') {
             console.log(`price`);
             fn.session.price = parseFloat(fn.message.text.trim());
         }
-
     });
     // lunching bot
     bot.launch();

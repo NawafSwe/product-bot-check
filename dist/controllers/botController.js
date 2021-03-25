@@ -144,11 +144,15 @@ function initialStart() {
             if (fn.message.location) {
                 fn.session.location = fn.message.location;
             }
+        });
+        bot.on(`text`, (fn) => __awaiter(this, void 0, void 0, function* () {
+            console.log(typeof fn.message);
+            console.log(fn.message);
             if (typeof fn.message.text === 'number') {
                 console.log(`price`);
                 fn.session.price = parseFloat(fn.message.text.trim());
             }
-        });
+        }));
         // lunching bot
         bot.launch();
         // Enable graceful stop
