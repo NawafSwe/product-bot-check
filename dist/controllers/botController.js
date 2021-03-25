@@ -68,6 +68,7 @@ function initialStart() {
         bot.command('out', (fn) => __awaiter(this, void 0, void 0, function* () {
             yield quitBot(fn);
         }));
+        // view session commands
         // triggered after help
         // session actions
         // getting session data
@@ -96,17 +97,23 @@ function initialStart() {
         // if he choose 0 or 1 or ... ect to 5
         yield initChoices();
         // if user had some problems with the physical status of the product or not
-        bot.action('bad', (fn, next) => __awaiter(this, void 0, void 0, function* () {
+        bot.action('upload', (fn, next) => __awaiter(this, void 0, void 0, function* () {
             fn.session.physicalQuality = `bad`;
             // next
-            yield askForLocation(fn);
+            // await askForLocation(fn);
             return next();
         }));
         bot.action('good', (fn, next) => __awaiter(this, void 0, void 0, function* () {
             fn.session.physicalQuality = `good`;
             // next
-            yield askForLocation(fn);
+            // await askForLocation(fn);
             return next();
+        }));
+        bot.action('uploadPhoto', (fn) => __awaiter(this, void 0, void 0, function* () {
+            yield askForLocation(fn);
+        }));
+        bot.action(`skipPhoto`, (fn) => __awaiter(this, void 0, void 0, function* () {
+            yield askForLocation(fn);
         }));
         // if user had bad experience with the delivery location or not
         bot.action('yes', (fn, next) => __awaiter(this, void 0, void 0, function* () {
@@ -164,11 +171,16 @@ function quitBot(fn) {
  * @description asking user about the physical status of the product
  */
 function checkPhysicalStatus(fn) {
-    fn.replyWithHTML(`<b>How was the physical status of the product? before answering You can send photo of the current product 📷, and you can provide price </b>`, Markup.inlineKeyboard([
-        [Markup.button.callback(`Good`, `good`), Markup.button.callback(`Bad`, 'bad')],
-        [Markup.button.callback('cancel', 'cancel')]
-    ]));
-    // proceeding  to location
+    return __awaiter(this, void 0, void 0, function* () {
+        yield fn.replyWithHTML(`<b>How was the physical status of the product? before answering You can send photo of the current product 📷, and you can provide price </b>`, Markup.inlineKeyboard([
+            [Markup.button.callback(`Good`, `good`), Markup.button.callback(`Bad`, 'bad')],
+            [Markup.button.callback('cancel', 'cancel')]
+        ]));
+        yield fn.replyWithHTML(`<b>Would like to provide a picture? if yes please send it and press okay if you would like to skip just press skip</b>`, Markup.inlineKeyboard([
+            Markup.button.callback(`Okay`, 'uploadPhoto'),
+            Markup.button.callback(`Skip`, `skipPhoto`),
+        ]));
+    });
 }
 /**
  * @function
@@ -244,6 +256,7 @@ function clearSession(fn) {
 }
 function indicateFinish(fn) {
     return __awaiter(this, void 0, void 0, function* () {
+        yield fn.replyWithHTML(`<b>Great We Finshed thank you for your feedback you can view the last operation you did by typing view session</b>`);
     });
 }
 function initChoices() {
@@ -266,5 +279,9 @@ function initChoices() {
             }
             finally { if (e_2) throw e_2.error; }
         }
+    });
+}
+function optionalPhoto(fn) {
+    return __awaiter(this, void 0, void 0, function* () {
     });
 }

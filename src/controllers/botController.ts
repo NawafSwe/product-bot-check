@@ -60,6 +60,8 @@ export async function initialStart() {
     bot.command('out', async (fn: Context) => {
         await quitBot(fn);
     });
+    // view session commands
+
 
     // triggered after help
     // session actions
@@ -93,23 +95,30 @@ export async function initialStart() {
 
     // action for user interaction after choosing rating
     // if he choose 0 or 1 or ... ect to 5
-    await initChoices()
-    // if user had some problems with the physical status of the product or not
+    await initChoices();
 
-    bot.action('bad', async (fn: any, next: NextFunction) => {
+    // if user had some problems with the physical status of the product or not
+    bot.action('upload', async (fn: any, next: NextFunction) => {
         fn.session.physicalQuality = `bad`;
         // next
-        await askForLocation(fn);
+        // await askForLocation(fn);
         return next();
     });
 
     bot.action('good', async (fn: any, next: NextFunction) => {
         fn.session.physicalQuality = `good`;
         // next
-        await askForLocation(fn);
+        // await askForLocation(fn);
         return next();
     });
 
+    bot.action('uploadPhoto', async (fn: any) => {
+        await askForLocation(fn);
+    });
+
+    bot.action(`skipPhoto`, async (fn: any) => {
+        await askForLocation(fn);
+    })
     // if user had bad experience with the delivery location or not
     bot.action('yes', async (fn: any, next: NextFunction) => {
         fn.session.locationDelivery = `Yes`;
@@ -172,12 +181,17 @@ async function quitBot(fn: any) {
  * @description asking user about the physical status of the product
  */
 
-function checkPhysicalStatus(fn: any) {
-    fn.replyWithHTML(`<b>How was the physical status of the product? before answering You can send photo of the current product 📷, and you can provide price </b>`, Markup.inlineKeyboard([
-        [Markup.button.callback(`Good`, `good`), Markup.button.callback(`Bad`, 'bad')],
-        [Markup.button.callback('cancel', 'cancel')]]
+async function checkPhysicalStatus(fn: any) {
+    await fn.replyWithHTML(`<b>How was the physical status of the product? before answering You can send photo of the current product 📷, and you can provide price </b>`, Markup.inlineKeyboard([
+            [Markup.button.callback(`Good`, `good`), Markup.button.callback(`Bad`, 'bad')],
+            [Markup.button.callback('cancel', 'cancel')]
+        ]
     ));
-    // proceeding  to location
+    await fn.replyWithHTML(`<b>Would like to provide a picture? if yes please send it and press okay if you would like to skip just press skip</b>`, Markup.inlineKeyboard([
+        Markup.button.callback(`Okay`, 'uploadPhoto'),
+        Markup.button.callback(`Skip`, `skipPhoto`),
+
+    ]));
 }
 
 /**
@@ -243,6 +257,7 @@ async function clearSession(fn: any) {
 }
 
 async function indicateFinish(fn: any) {
+    await fn.replyWithHTML(`<b>Great We Finshed thank you for your feedback you can view the last operation you did by typing view session</b>`)
 
 }
 
@@ -255,4 +270,7 @@ async function initChoices() {
             return next();
         });
     }
+}
+
+async function optionalPhoto(fn: Context) {
 }
