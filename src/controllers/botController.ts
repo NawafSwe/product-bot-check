@@ -13,7 +13,7 @@ const {Telegraf, Markup, Extra, TelegrafContext} = require('telegraf');
 import {NextFunction} from "express";
 import TelegrafQuestion from "telegraf-question";
 import {Context} from "telegraf/typings/context";
-import {AnswersQuires, BotCommands, BotQuires, BotActions} from "../utilites/botQuires";
+import {AnswersQuires, BotCommands, BotQuires} from "../utilites/botQuires";
 import LocalSession = require('telegraf-session-local');
 
 // creating bot

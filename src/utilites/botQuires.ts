@@ -35,15 +35,6 @@ export const BotCommands = {
     clearSession: {name: 'clearData'},
     commands: {name: 'commands'}
 }
-
-export const BotActions = {
-    uploadPhoto: {action: '', name: ''},
-    skipUploadPhoto: {action: '', name: ''},
-    uploadLocation: {action: '', name: ''},
-    skipLocation: {action: '', name: ''}
-
-}
-
 /**
  *@namespace BotQuires
  * @description bot queries contains all required sentences for the bot , using this approach to avoid typos and to much typing
